@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"regexp"
 
-	"github.com/goinaction/code/chapter2/sample/search"
+	"goinaction-code/chapter2/sample/search"
 )
 
 type (
@@ -79,36 +79,51 @@ func (m rssMatcher) Search(feed *search.Feed, searchTerm string) ([]*search.Resu
 	}
 
 	for _, channelItem := range document.Channel.Item {
-		// Check the title for the search term.
-		matched, err := regexp.MatchString(searchTerm, channelItem.Title)
+
+		matched,field, err := isItemMatched(channelItem, searchTerm)
 		if err != nil {
 			return nil, err
 		}
 
 		// If we found a match save the result.
+		var content string
+		if field == "title" {
+			content = channelItem.Title
+		}else {
+			content = channelItem.Description
+		}
 		if matched {
 			results = append(results, &search.Result{
-				Field:   "Title",
-				Content: channelItem.Title,
-			})
-		}
-
-		// Check the description for the search term.
-		matched, err = regexp.MatchString(searchTerm, channelItem.Description)
-		if err != nil {
-			return nil, err
-		}
-
-		// If we found a match save the result.
-		if matched {
-			results = append(results, &search.Result{
-				Field:   "Description",
-				Content: channelItem.Description,
+				Field:   field,
+				Content: content,
 			})
 		}
 	}
 
 	return results, nil
+}
+
+func isItemMatched(item item, searchTerm string) (bool,string, error) {
+	//log.Printf("isItemMatched [%s]", item.Title)
+	isTitleMatched, err := regexp.MatchString(searchTerm, item.Title)
+	if err != nil {
+		return false,"", err
+	}
+	isDescriptionMatched, err := regexp.MatchString(searchTerm, item.Description)
+	if err != nil {
+		return false,"", err
+	}
+
+	if isTitleMatched || isDescriptionMatched {
+		if  isTitleMatched {
+			return true,"Title",nil
+		}else {
+			return true,"Description",nil
+		}
+
+	} else {
+		return false,"",nil
+	}
 }
 
 // retrieve performs a HTTP Get request for the rss feed and decodes the results.
