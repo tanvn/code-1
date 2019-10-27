@@ -87,7 +87,7 @@ func (m rssMatcher) Search(feed *search.Feed, searchTerm string) ([]*search.Resu
 
 		// If we found a match save the result.
 		var content string
-		if field == "title" {
+		if field == "Title" {
 			content = channelItem.Title
 		}else {
 			content = channelItem.Description
