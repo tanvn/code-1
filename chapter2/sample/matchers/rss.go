@@ -103,6 +103,9 @@ func (m rssMatcher) Search(feed *search.Feed, searchTerm string) ([]*search.Resu
 	return results, nil
 }
 
+// if the searchTerm matches both title and description,
+// here we consider it matches the Title and ignore the description field which is in contrast to
+// the original version, when the item matches both, we save the item twice
 func isItemMatched(item item, searchTerm string) (bool,string, error) {
 	//log.Printf("isItemMatched [%s]", item.Title)
 	isTitleMatched, err := regexp.MatchString(searchTerm, item.Title)
