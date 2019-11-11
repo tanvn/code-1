@@ -42,7 +42,7 @@ func foo(array [length]int){
 }
 
 func fooPointer(array *[length]int) {
-	array[0] = 10 // why * can be omitted ? 
+	array[0] = 10 // why * can be omitted ?
 	// array is a pointer to an array, so (*array)[1] will dereference to the element at index 1
 	(*array)[1] = 11
 	//*array[2] = 12 // this will not work, because it means *(array[2]) not (*array)[2]
